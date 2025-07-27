@@ -1,0 +1,11 @@
+# Ignore node_modules in all subfolders
+**/node_modules/
+
+# Ignore all .env files in all subfolders
+**/.env
+
+# Optional: OS or editor-specific files
+.DS_Store
+*.log
+.env
+api-gateway/index.js

@@ -4,6 +4,10 @@ import { generateAccessToken, generateRefreshToken } from '../utils/jwt.js';
 
 export const register = async (req, res) => {
   const { email, password } = req.body;
+  const existingUser=await UserModel.findOne({email});
+  if (existingUser) {
+    return res.status(400).json({ message: "User already exists" });
+  }
   const hash = await bcrypt.hash(password, 10);
   const user = new UserModel({ email, password: hash });
   await user.save();
@@ -11,7 +15,6 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  console.log(' Login request received:', req.body,Date.now());
   const { email, password } = req.body;
   const user = await UserModel.findOne({ email });
   if (!user || !(await bcrypt.compare(password, user.password))) {
@@ -20,7 +23,17 @@ export const login = async (req, res) => {
 
   const payload = { id: user._id, email: user.email };
   const accessToken = generateAccessToken(payload);
-  const refreshToken = generateRefreshToken(payload);
+ res.cookie('accessToken', accessToken, {
+  httpOnly: true,           // prevent JS access
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'Lax',          // or 'None' if using cross-domain with HTTPS
+  maxAge: 24 * 60 * 60 * 1000 // 1 day
+});
 
-  res.json({ accessToken, refreshToken });
+res.cookie('userInfo', JSON.stringify({ email: user.email, id: user._id }), {
+  httpOnly: false,          // so frontend can read it (optional)
+  sameSite: 'Lax',
+  maxAge: 24 * 60 * 60 * 1000
+});
+  res.json({ accessToken, email: user.email });
 };

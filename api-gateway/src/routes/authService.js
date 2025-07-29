@@ -23,7 +23,7 @@ const setAuthRoutes = () => {
         return authProxy(req, res, next);
       });
     } catch (error) {
-      logger.error('Authentication failed:', error);
+      logger.error(error);
       res.status(401).json({ error: 'Unauthorized' });
     }
   };

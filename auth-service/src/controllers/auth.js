@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import { UserModel } from '../models/User.js';
 import { generateAccessToken, generateRefreshToken } from '../utils/jwt.js';
-
+import jwt from 'jsonwebtoken';
 export const register = async (req, res) => {
   const { email, password } = req.body;
   const existingUser=await UserModel.findOne({email});
@@ -37,3 +37,14 @@ res.cookie('userInfo', JSON.stringify({ email: user.email, id: user._id }), {
 });
   res.json({ accessToken, email: user.email });
 };
+
+export const profile = async (req,res)=>{
+  const token = req.cookies?.accessToken;
+  const data=await jwt.verify(token, process.env.JWT_SECRET)
+  const { email } = data;
+  const user = await UserModel.findOne({email}).select('-password');
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+  res.json(user);
+}

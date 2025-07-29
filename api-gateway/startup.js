@@ -3,11 +3,13 @@ import morgan from 'morgan';
 import Logger from './src/logs/logger.js';
 import authRoutes from './src/routes/authService.js';
 import { apiLogger } from './src/middleware/apiLoggerMiddleware.js';
-
+import cookieParser from 'cookie-parser';
 
 export const initStartup = (app) => {
 const logger = new Logger('initStartup');
 app.use(apiLogger);
+app.use(cookieParser());
+
 const allowedOrigins=process.env.ALLOWED_ORIGINS.split(',');
 
  app.use(cors({

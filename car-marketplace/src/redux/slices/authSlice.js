@@ -8,10 +8,7 @@ export const getLoggedInUser = createAsyncThunk(
   async (_, thunkAPI) => {
     console.log("Fetching logged-in user");
     try {
-  const res = await axios.post(import.meta.env.VITE_AUTH_LOGIN_URL, {
-      email: 'aboutmanishh@gmail.com',
-      password: '123',
-    }, {
+  const res = await axios.get(import.meta.env.VITE_AUTH_PROFILE_URL, {
       withCredentials: true
     });
       return res.data; // e.g., { user, token }

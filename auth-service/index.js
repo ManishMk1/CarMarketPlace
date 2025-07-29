@@ -8,8 +8,8 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-  origin: 'http://localhost:5173', // same frontend
-  credentials: true               // required to allow cookies
+  origin: 'http://localhost:5173', 
+  credentials: true               
 }));
 
 
